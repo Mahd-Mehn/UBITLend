@@ -4,7 +4,7 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 export default function Homepage() {
   return (
-    <main className="p-6 text-white font-semibold flex items-center justify-center h-full">
+    <main className="p-2 md:p-6 text-white font-semibold flex items-center justify-center h-full">
       <HeroSection />
     </main>
   );

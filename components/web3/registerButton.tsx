@@ -93,7 +93,7 @@ const Home = () => {
   return (
     <div className="rounded-md min-w-screen-lg">
       <div>
-        <form onSubmit={handleSubmit} className="w-full p-2 max-w-3xl">
+        <form onSubmit={handleSubmit} className="w-full p-2 md:max-w-3xl">
           <div className="">
             {/* Card */}
             <Card>
