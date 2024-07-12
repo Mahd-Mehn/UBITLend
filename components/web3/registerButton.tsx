@@ -114,7 +114,7 @@ const Home = () => {
               <CardContent>
                 <div className="mt-5 text-xl">
                   {/* Grid */}
-                  <div className="grid grid-cols-2 gap-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
                     <Label className="text-lg">
                       How much do you want to borrow?
                     </Label>
