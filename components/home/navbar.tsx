@@ -75,35 +75,38 @@ export function Navbar() {
               href="#"
               className="flex items-center gap-2 text-lg font-semibold"
             >
-              <Package2 className="h-6 w-6" />
-              <span className="sr-only">Acme Inc</span>
+              <BadgeDollarSign className="h-6 w-6" />
+              <span className="sr-only">UBITLend</span>
             </Link>
             <Link
               href="#"
               className="text-muted-foreground hover:text-foreground"
             >
-              Dashboard
+              UBITLend
             </Link>
             <Link
               href="#"
               className="text-muted-foreground hover:text-foreground"
             >
-              Orders
+              Requests
             </Link>
             <Link
               href="#"
               className="text-muted-foreground hover:text-foreground"
             >
-              Products
+              Proposals
             </Link>
             <Link
               href="#"
               className="text-muted-foreground hover:text-foreground"
             >
-              Customers
+              Transactions
             </Link>
-            <Link href="#" className="hover:text-foreground">
-              Settings
+            <Link
+              href="#"
+              className="text-muted-foreground hover:text-foreground"
+            >
+              Profile
             </Link>
           </nav>
         </SheetContent>
