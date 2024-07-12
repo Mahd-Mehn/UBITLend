@@ -13,7 +13,7 @@ export default function HeroSection() {
   return (
     <>
       {/* Hero */}
-      <div className="md:container px-6 py-12 md:py-24">
+      <div className="lg:container px-4 py-12 md:py-24">
         {/* Grid */}
         <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8 xl:gap-20 md:items-center text-foreground">
           <div>
@@ -45,7 +45,7 @@ export default function HeroSection() {
         </div>
         <>
           {/* Icon Blocks */}
-          <div className="md:container px-6 py-12 md:py-24">
+          <div className="lg:container px-4 py-12 md:py-24">
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 items-center gap-2">
               {/* Icon Block */}
               <a
