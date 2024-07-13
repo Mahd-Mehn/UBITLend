@@ -4,6 +4,7 @@ import "./globals.css";
 import WagmiLayoutProvider from "@/app/providers";
 import { ThemeProvider } from "@/components/themes/provider";
 import { Navbar } from "@/components/home/navbar";
+import HomeLayout from "@/components/layout/main";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -27,7 +28,7 @@ export default function RootLayout({
         >
           <WagmiLayoutProvider>
             <Navbar />
-            {children}
+            <HomeLayout>{children}</HomeLayout>
           </WagmiLayoutProvider>
         </ThemeProvider>
       </body>

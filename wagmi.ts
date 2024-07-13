@@ -7,6 +7,7 @@ import {
   polygon,
   sepolia,
 } from "wagmi/chains";
+import { ubit } from "./customChain";
 
 export const config = getDefaultConfig({
   appName: "P2PMarketplace",
@@ -17,7 +18,9 @@ export const config = getDefaultConfig({
     optimism,
     arbitrum,
     base,
-    ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === "true" ? [sepolia] : []),
+    ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === "true"
+      ? [sepolia, ubit]
+      : []),
   ],
   ssr: true,
 });

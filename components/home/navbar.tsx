@@ -32,31 +32,31 @@ export function Navbar() {
           <span className="sr-only">Acme Inc</span>
         </Link>
         <Link
-          href="#"
+          href="/"
           className="text-muted-foreground transition-colors hover:text-foreground font-bold text-lg"
         >
           UBITLend
         </Link>
         <Link
-          href="#"
+          href="/requests"
           className="text-muted-foreground transition-colors hover:text-foreground"
         >
           Requests
         </Link>
         <Link
-          href="#"
+          href="/proposals"
           className="text-muted-foreground transition-colors hover:text-foreground"
         >
           Proposals
         </Link>
         <Link
-          href="#"
+          href="/transactions"
           className="text-muted-foreground transition-colors hover:text-foreground"
         >
           Transactions
         </Link>
         <Link
-          href="#"
+          href="/profile"
           className="text-muted-foreground transition-colors hover:text-foreground"
         >
           Profile
@@ -85,25 +85,25 @@ export function Navbar() {
               UBITLend
             </Link>
             <Link
-              href="#"
+              href="/requests"
               className="text-muted-foreground hover:text-foreground"
             >
               Requests
             </Link>
             <Link
-              href="#"
+              href="/proposals"
               className="text-muted-foreground hover:text-foreground"
             >
               Proposals
             </Link>
             <Link
-              href="#"
+              href="/transactions"
               className="text-muted-foreground hover:text-foreground"
             >
               Transactions
             </Link>
             <Link
-              href="#"
+              href="/profile"
               className="text-muted-foreground hover:text-foreground"
             >
               Profile

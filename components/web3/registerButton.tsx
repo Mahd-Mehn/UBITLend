@@ -22,7 +22,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 
 const contractConfig = {
-  address: "0x35bb9b7e79c5Cc9Dad01eB0366B0dB6363fc3c49",
+  address: "0xe73f7529F497106Fe7726Ee8E1186973305d5DAC",
   wagmiAbi,
 } as const;
 
@@ -34,7 +34,7 @@ const Home = () => {
   const { isConnected } = useAccount();
 
   const [loanAmount, setLoanAmount] = React.useState("");
-  const [interestRate, setInterestRate] = React.useState("");
+  const [duration, setDuration] = React.useState("");
 
   const {
     data: hash,
@@ -74,10 +74,10 @@ const Home = () => {
     setLoanAmount(e.target.value);
   };
 
-  const handleInterestRateChange = (e: {
+  const handleDurationChange = (e: {
     target: { value: React.SetStateAction<string> };
   }) => {
-    setInterestRate(e.target.value);
+    setDuration(e.target.value);
   };
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
@@ -86,7 +86,7 @@ const Home = () => {
       ...contractConfig,
       functionName: "createLoanRequest",
       abi: wagmiAbi,
-      args: [loanAmount, interestRate],
+      args: [loanAmount, duration],
     });
   };
 
@@ -130,8 +130,8 @@ const Home = () => {
                     </Label>
                     <Input
                       type="number"
-                      value={interestRate}
-                      onChange={handleInterestRateChange}
+                      value={duration}
+                      onChange={handleDurationChange}
                       className="text-foreground"
                       required
                     />
@@ -184,8 +184,8 @@ const Home = () => {
                 Interest Rate:
                 <Input
                   type="number"
-                  value={interestRate}
-                  onChange={handleInterestRateChange}
+                  value={Duration}
+                  onChange={handleDurationChange}
                   className="text-foreground"
                   required
                 />
