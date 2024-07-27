@@ -12,9 +12,7 @@ import {
 export default function HeroSection() {
   return (
     <>
-      {/* Hero */}
       <div className="lg:container px-4 py-12 md:py-24">
-        {/* Grid */}
         <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8 xl:gap-20 md:items-center text-foreground">
           <div>
             <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
@@ -24,7 +22,6 @@ export default function HeroSection() {
               Simplify and secure lending and borrowing of tokens today.
               Register and make a loan request now!
             </p>
-            {/* Buttons */}
             <div className="mt-7 grid gap-3 w-full sm:inline-flex">
               <Link href={"/requests"}>
                 <Button size={"lg"}>Get started</Button>
@@ -35,19 +32,14 @@ export default function HeroSection() {
                 </Button>
               </Link>
             </div>
-            {/* End Buttons */}
           </div>
-          {/* Col */}
           <div className="relative ms-4">
             <Home />
           </div>
-          {/* End Col */}
         </div>
         <>
-          {/* Icon Blocks */}
           <div className="lg:container px-4 py-12 md:py-24">
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 items-center gap-2">
-              {/* Icon Block */}
               <a
                 className="group flex flex-col justify-center hover:bg-primary-foreground/20 rounded-lg p-4 md:p-7 "
                 href="#"
@@ -66,8 +58,6 @@ export default function HeroSection() {
                   </span>
                 </div>
               </a>
-              {/* End Icon Block */}
-              {/* Icon Block */}
               <a
                 className="group flex flex-col justify-center hover:bg-primary-foreground/20 rounded-lg p-4 md:p-7 "
                 href="#"
@@ -86,8 +76,6 @@ export default function HeroSection() {
                   </span>
                 </div>
               </a>
-              {/* End Icon Block */}
-              {/* Icon Block */}
               <a
                 className="group flex flex-col justify-center hover:bg-primary-foreground/20 rounded-lg p-4 md:p-7 "
                 href="#"
@@ -106,8 +94,6 @@ export default function HeroSection() {
                   </span>
                 </div>
               </a>
-              {/* End Icon Block */}
-              {/* Icon Block */}
               <a
                 className="group flex flex-col justify-center hover:bg-primary-foreground/20 rounded-lg p-4 md:p-7 "
                 href="#"
@@ -126,13 +112,10 @@ export default function HeroSection() {
                   </span>
                 </div>
               </a>
-              {/* End Icon Block */}
             </div>
           </div>
-          {/* End Icon Blocks */}
         </>
       </div>
-      {/* End Hero */}
     </>
   );
 }

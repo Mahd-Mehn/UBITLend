@@ -1,0 +1,460 @@
+[
+  { "type": "constructor", "stateMutability": "nonpayable", "inputs": [] },
+  {
+    "type": "event",
+    "name": "AdminFeeWithdrawal",
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "amount",
+        "internalType": "uint256",
+        "indexed": false
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "CollateralDefaulted",
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "loanRequestId",
+        "internalType": "uint256",
+        "indexed": false
+      },
+      {
+        "type": "address",
+        "name": "lender",
+        "internalType": "address",
+        "indexed": false
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "CollateralRefunded",
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "loanRequestId",
+        "internalType": "uint256",
+        "indexed": false
+      },
+      {
+        "type": "address",
+        "name": "borrower",
+        "internalType": "address",
+        "indexed": false
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "CreditScoreUpdated",
+    "inputs": [
+      {
+        "type": "address",
+        "name": "user",
+        "internalType": "address",
+        "indexed": false
+      },
+      {
+        "type": "uint256",
+        "name": "newScore",
+        "internalType": "uint256",
+        "indexed": false
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "FeeCollected",
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "amount",
+        "internalType": "uint256",
+        "indexed": false
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "LoanAccepted",
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "loanRequestId",
+        "internalType": "uint256",
+        "indexed": false
+      },
+      {
+        "type": "address",
+        "name": "lender",
+        "internalType": "address",
+        "indexed": false
+      },
+      {
+        "type": "uint256",
+        "name": "interestRate",
+        "internalType": "uint256",
+        "indexed": false
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "LoanProposed",
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "loanRequestId",
+        "internalType": "uint256",
+        "indexed": false
+      },
+      {
+        "type": "address",
+        "name": "lender",
+        "internalType": "address",
+        "indexed": false
+      },
+      {
+        "type": "uint256",
+        "name": "interestRate",
+        "internalType": "uint256",
+        "indexed": false
+      },
+      {
+        "type": "uint256",
+        "name": "amount",
+        "internalType": "uint256",
+        "indexed": false
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "LoanRepaid",
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "loanRequestId",
+        "internalType": "uint256",
+        "indexed": false
+      },
+      {
+        "type": "address",
+        "name": "borrower",
+        "internalType": "address",
+        "indexed": false
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "LoanRequested",
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "loanRequestId",
+        "internalType": "uint256",
+        "indexed": false
+      },
+      {
+        "type": "address",
+        "name": "borrower",
+        "internalType": "address",
+        "indexed": false
+      },
+      {
+        "type": "uint256",
+        "name": "amount",
+        "internalType": "uint256",
+        "indexed": false
+      },
+      {
+        "type": "uint256",
+        "name": "duration",
+        "internalType": "uint256",
+        "indexed": false
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "OwnershipTransferred",
+    "inputs": [
+      {
+        "type": "address",
+        "name": "previousOwner",
+        "internalType": "address",
+        "indexed": true
+      },
+      {
+        "type": "address",
+        "name": "newOwner",
+        "internalType": "address",
+        "indexed": true
+      }
+    ],
+    "anonymous": false
+  },
+  { "type": "fallback", "stateMutability": "payable" },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [{ "type": "uint256", "name": "", "internalType": "uint256" }],
+    "name": "FEE_DIVISOR",
+    "inputs": []
+  },
+  {
+    "type": "function",
+    "stateMutability": "nonpayable",
+    "outputs": [],
+    "name": "acceptLoan",
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "_loanRequestId",
+        "internalType": "uint256"
+      },
+      { "type": "address", "name": "_lender", "internalType": "address" }
+    ]
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [{ "type": "address", "name": "", "internalType": "address" }],
+    "name": "acceptedProposals",
+    "inputs": [{ "type": "uint256", "name": "", "internalType": "uint256" }]
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [{ "type": "uint256", "name": "", "internalType": "uint256" }],
+    "name": "balances",
+    "inputs": [{ "type": "address", "name": "", "internalType": "address" }]
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [{ "type": "uint256", "name": "", "internalType": "uint256" }],
+    "name": "creditScores",
+    "inputs": [{ "type": "address", "name": "", "internalType": "address" }]
+  },
+  {
+    "type": "function",
+    "stateMutability": "nonpayable",
+    "outputs": [],
+    "name": "defaultLoan",
+    "inputs": [
+      { "type": "uint256", "name": "_loanRequestId", "internalType": "uint256" }
+    ]
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [{ "type": "uint256", "name": "", "internalType": "uint256" }],
+    "name": "feePercentage",
+    "inputs": []
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [{ "type": "uint256", "name": "", "internalType": "uint256" }],
+    "name": "getContractBalance",
+    "inputs": []
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [{ "type": "uint256", "name": "", "internalType": "uint256" }],
+    "name": "getCreditScore",
+    "inputs": [
+      { "type": "address", "name": "_user", "internalType": "address" }
+    ]
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [
+      { "type": "address[]", "name": "", "internalType": "address[]" }
+    ],
+    "name": "getLenderAddresses",
+    "inputs": [
+      { "type": "uint256", "name": "_loanRequestId", "internalType": "uint256" }
+    ]
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [
+      { "type": "address", "name": "lender", "internalType": "address" },
+      { "type": "uint256", "name": "interestRate", "internalType": "uint256" },
+      { "type": "uint256", "name": "amount", "internalType": "uint256" },
+      { "type": "bool", "name": "accepted", "internalType": "bool" }
+    ],
+    "name": "getLoanProposal",
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "_loanRequestId",
+        "internalType": "uint256"
+      },
+      { "type": "address", "name": "_lender", "internalType": "address" }
+    ]
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [
+      { "type": "address", "name": "borrower", "internalType": "address" },
+      { "type": "uint256", "name": "amount", "internalType": "uint256" },
+      { "type": "uint256", "name": "duration", "internalType": "uint256" },
+      { "type": "uint256", "name": "deposit", "internalType": "uint256" },
+      { "type": "uint256", "name": "startTime", "internalType": "uint256" },
+      { "type": "bool", "name": "active", "internalType": "bool" },
+      { "type": "bool", "name": "isRepaid", "internalType": "bool" }
+    ],
+    "name": "getLoanRequest",
+    "inputs": [
+      { "type": "uint256", "name": "_loanRequestId", "internalType": "uint256" }
+    ]
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [{ "type": "uint256", "name": "", "internalType": "uint256" }],
+    "name": "getTotalFeesCollected",
+    "inputs": []
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [
+      { "type": "address", "name": "lender", "internalType": "address" },
+      { "type": "uint256", "name": "interestRate", "internalType": "uint256" },
+      { "type": "uint256", "name": "amount", "internalType": "uint256" },
+      { "type": "bool", "name": "accepted", "internalType": "bool" }
+    ],
+    "name": "loanProposals",
+    "inputs": [
+      { "type": "uint256", "name": "", "internalType": "uint256" },
+      { "type": "address", "name": "", "internalType": "address" }
+    ]
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [{ "type": "address", "name": "", "internalType": "address" }],
+    "name": "loanRequestLenders",
+    "inputs": [
+      { "type": "uint256", "name": "", "internalType": "uint256" },
+      { "type": "uint256", "name": "", "internalType": "uint256" }
+    ]
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [
+      { "type": "address", "name": "borrower", "internalType": "address" },
+      { "type": "uint256", "name": "amount", "internalType": "uint256" },
+      { "type": "uint256", "name": "duration", "internalType": "uint256" },
+      { "type": "uint256", "name": "deposit", "internalType": "uint256" },
+      { "type": "uint256", "name": "startTime", "internalType": "uint256" },
+      { "type": "bool", "name": "active", "internalType": "bool" },
+      { "type": "bool", "name": "isRepaid", "internalType": "bool" }
+    ],
+    "name": "loanRequests",
+    "inputs": [{ "type": "uint256", "name": "", "internalType": "uint256" }]
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [{ "type": "uint256", "name": "", "internalType": "uint256" }],
+    "name": "nextLoanRequestId",
+    "inputs": []
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [{ "type": "address", "name": "", "internalType": "address" }],
+    "name": "owner",
+    "inputs": []
+  },
+  {
+    "type": "function",
+    "stateMutability": "payable",
+    "outputs": [],
+    "name": "proposeLoan",
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "_loanRequestId",
+        "internalType": "uint256"
+      },
+      { "type": "uint256", "name": "_interestRate", "internalType": "uint256" }
+    ]
+  },
+  {
+    "type": "function",
+    "stateMutability": "nonpayable",
+    "outputs": [],
+    "name": "renounceOwnership",
+    "inputs": []
+  },
+  {
+    "type": "function",
+    "stateMutability": "payable",
+    "outputs": [],
+    "name": "repayLoan",
+    "inputs": [
+      { "type": "uint256", "name": "_loanRequestId", "internalType": "uint256" }
+    ]
+  },
+  {
+    "type": "function",
+    "stateMutability": "payable",
+    "outputs": [],
+    "name": "requestLoan",
+    "inputs": [
+      { "type": "uint256", "name": "_amount", "internalType": "uint256" },
+      { "type": "uint256", "name": "_duration", "internalType": "uint256" }
+    ]
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [{ "type": "uint256", "name": "", "internalType": "uint256" }],
+    "name": "totalFeesCollected",
+    "inputs": []
+  },
+  {
+    "type": "function",
+    "stateMutability": "nonpayable",
+    "outputs": [],
+    "name": "transferOwnership",
+    "inputs": [
+      { "type": "address", "name": "newOwner", "internalType": "address" }
+    ]
+  },
+  {
+    "type": "function",
+    "stateMutability": "nonpayable",
+    "outputs": [],
+    "name": "withdrawFees",
+    "inputs": [
+      { "type": "uint256", "name": "_amount", "internalType": "uint256" }
+    ]
+  },
+  { "type": "receive", "stateMutability": "payable" }
+]

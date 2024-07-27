@@ -1,13 +1,7 @@
 "use client";
-import React from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import {
-  useAccount,
-  useReadContract,
-  useWaitForTransactionReceipt,
-  useWriteContract,
-} from "wagmi";
-import { wagmiAbi } from "../../abi";
+import { useAccount } from "wagmi";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import {
@@ -15,201 +9,140 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-
-const contractConfig = {
-  address: "0xe73f7529F497106Fe7726Ee8E1186973305d5DAC",
-  wagmiAbi,
-} as const;
+import { useRouter } from "next/navigation";
+import { getLendingPoolContract } from "@/contract";
+import { ethers } from "ethers";
 
 const Home = () => {
-  const [mounted, setMounted] = React.useState(true);
-  React.useEffect(() => setMounted(true), []);
+  const { address, isConnected } = useAccount();
+  const [provider, setProvider] =
+    useState<ethers.providers.Web3Provider | null>(null);
+  const [amount, setAmount] = useState<string>("");
+  const [duration, setDuration] = useState<string>("");
 
-  const [totalLoans, setTotalLoans] = React.useState(0);
-  const { isConnected } = useAccount();
+  const router = useRouter();
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const [loanAmount, setLoanAmount] = React.useState("");
-  const [duration, setDuration] = React.useState("");
+  useEffect(() => {
+    const initializeProvider = async () => {
+      if (typeof window !== "undefined" && window.ethereum) {
+        try {
+          await window.ethereum.request({ method: "eth_requestAccounts" });
+          const provider = new ethers.providers.Web3Provider(window.ethereum);
+          setProvider(provider);
+        } catch (error) {
+          console.error("Error requesting accounts:", error);
+        }
+      }
+    };
 
-  const {
-    data: hash,
-    writeContract: createLoanRequest,
-    isPending: isUserRegistrationPending,
-    isSuccess: isUserRegistrationSuccessful,
-    error: registerError,
-  } = useWriteContract();
+    initializeProvider();
+  }, []);
 
-  const { data: totalLoansSupply } = useReadContract({
-    ...contractConfig,
-    functionName: "loanRequests",
-  });
-
-  const {
-    data: txData,
-    isSuccess: txSuccess,
-    error: txError,
-  } = useWaitForTransactionReceipt({
-    hash,
-    query: {
-      enabled: !!hash,
-    },
-  });
-
-  React.useEffect(() => {
-    if (totalLoansSupply) {
-      setTotalLoans(totalLoans);
-    }
-  }, [totalLoans, totalLoansSupply]);
-
-  const isMinted = txSuccess;
-
-  const handleLoanAmountChange = (e: {
-    target: { value: React.SetStateAction<string> };
-  }) => {
-    setLoanAmount(e.target.value);
+  const handleAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setAmount(e.target.value);
   };
 
-  const handleDurationChange = (e: {
-    target: { value: React.SetStateAction<string> };
-  }) => {
+  const handleDurationChange = (e: ChangeEvent<HTMLInputElement>) => {
     setDuration(e.target.value);
   };
 
-  const handleSubmit = (e: { preventDefault: () => void }) => {
-    e.preventDefault();
-    createLoanRequest?.({
-      ...contractConfig,
-      functionName: "createLoanRequest",
-      abi: wagmiAbi,
-      args: [loanAmount, duration],
-    });
+  const requestLoan = async () => {
+    if (!isConnected || !provider) {
+      console.error("Please connect your wallet.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const contract = getLendingPoolContract(provider);
+      const amountWei = ethers.utils.parseEther(amount);
+      const collateralAmountWei = amountWei.mul(70).div(100);
+
+      const tx = await contract.requestLoan(amountWei, parseInt(duration), {
+        value: collateralAmountWei,
+      });
+
+      await tx.wait();
+      console.log("Loan request submitted successfully.");
+      alert("Loan request submitted successfully!");
+      router.push("/requests");
+    } catch (error) {
+      console.error("Error submitting loan request:", error);
+      alert(
+        "Failed to submit loan request. Please check the console for details."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="rounded-md min-w-screen-lg">
       <div>
-        <form onSubmit={handleSubmit} className="w-full p-2 md:max-w-3xl">
-          <div className="">
-            {/* Card */}
-            <Card>
-              <CardHeader className="text-center">
-                <h2 className="text-3xl font-semibold leading-none tracking-tight">
-                  Publish a Loan Request Now!
-                </h2>
-                <CardDescription>
-                  View loan request?{" "}
-                  <a
-                    className="text-primary hover:underline underline-offset-4"
-                    href="#"
-                  >
-                    Click Here
-                  </a>
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="mt-5 text-xl">
-                  {/* Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
-                    <Label className="text-lg">
-                      How much do you want to borrow?
-                    </Label>
-                    <Input
-                      type="number"
-                      value={loanAmount}
-                      onChange={handleLoanAmountChange}
-                      className="text-foreground"
-                      required
-                    />
-                    <Label className="text-lg">
-                      When will you pay back? (in weeks)
-                    </Label>
-                    <Input
-                      type="number"
-                      value={duration}
-                      onChange={handleDurationChange}
-                      className="text-foreground"
-                      required
-                    />
+        <form
+          onSubmit={(e) => e.preventDefault()}
+          className="w-full p-2 md:max-w-3xl"
+        >
+          <Card>
+            <CardHeader className="text-center">
+              <h2 className="text-3xl font-semibold leading-none tracking-tight">
+                Publish a Loan Request Now!
+              </h2>
+              <CardDescription>
+                View loan requests?{" "}
+                <a
+                  className="text-primary hover:underline underline-offset-4"
+                  href="#"
+                >
+                  Click Here
+                </a>
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="mt-5 text-xl">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+                  <Label className="text-lg">
+                    How much do you want to borrow?
+                  </Label>
+                  <Input
+                    type="number"
+                    placeholder="Enter loan amount"
+                    value={amount}
+                    onChange={handleAmountChange}
+                    className="text-foreground"
+                    required
+                  />
+                  <Label className="text-lg">
+                    When will you pay back? (in days)
+                  </Label>
+                  <Input
+                    type="number"
+                    value={duration}
+                    onChange={handleDurationChange}
+                    placeholder="Enter loan duration"
+                    className="text-foreground"
+                    required
+                  />
 
-                    {isConnected ? (
-                      <Button
-                        type="submit"
-                        disabled={
-                          !createLoanRequest ||
-                          isUserRegistrationPending ||
-                          isUserRegistrationSuccessful
-                        }
-                        className="mt-3 col-span-2"
-                        data-mint-loading={isUserRegistrationPending}
-                        data-mint-started={isUserRegistrationSuccessful}
-                      >
-                        {isUserRegistrationPending && "Waiting for approval"}
-                        {isUserRegistrationSuccessful && "Minting..."}
-                        {!isUserRegistrationPending &&
-                          !isUserRegistrationSuccessful &&
-                          "Publish Loan Request"}
-                      </Button>
-                    ) : (
-                      <ConnectButton />
-                    )}
-                  </div>
-                  {/* Grid End */}
+                  {isConnected ? (
+                    <Button
+                      className="mt-3 col-span-2"
+                      onClick={requestLoan}
+                      disabled={loading}
+                    >
+                      {loading ? "Submitting..." : "Request Loan"}
+                    </Button>
+                  ) : (
+                    <ConnectButton />
+                  )}
                 </div>
-              </CardContent>
-            </Card>
-            {/* End Card */}
-          </div>
+              </div>
+            </CardContent>
+          </Card>
         </form>
-        {/* {mounted && (
-          <form onSubmit={handleSubmit}>
-            <div>
-              <label>
-                Loan Amount (in wei):
-                <Input
-                  type="number"
-                  value={loanAmount}
-                  onChange={handleLoanAmountChange}
-                  className="text-foreground"
-                  required
-                />
-              </label>
-            </div>
-            <div>
-              <label>
-                Interest Rate:
-                <Input
-                  type="number"
-                  value={Duration}
-                  onChange={handleDurationChange}
-                  className="text-foreground"
-                  required
-                />
-              </label>
-            </div>
-            <Button
-              type="submit"
-              disabled={
-                !createLoanRequest ||
-                isUserRegistrationPending ||
-                isUserRegistrationSuccessful
-              }
-              className="my-2"
-              data-mint-loading={isUserRegistrationPending}
-              data-mint-started={isUserRegistrationSuccessful}
-            >
-              {isUserRegistrationPending && "Waiting for approval"}
-              {isUserRegistrationSuccessful && "Minting..."}
-              {!isUserRegistrationPending &&
-                !isUserRegistrationSuccessful &&
-                "Make Loan Request"}
-            </Button>
-          </form>
-        )} */}
       </div>
     </div>
   );

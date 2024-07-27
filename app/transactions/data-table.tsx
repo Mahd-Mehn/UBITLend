@@ -1,237 +1,92 @@
-"use client";
+// hooks/useTransactions.ts
+import { useState, useEffect } from "react";
+import { ethers } from "ethers";
+import { getLendingPoolContract } from "@/contract";
+import { Transaction } from "@/types/transaction";
 
-import React from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ChevronUp } from "lucide-react";
+export function useTransactions(
+  provider: ethers.providers.Web3Provider | null
+) {
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
-import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
-  PaginationState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      if (provider) {
+        setLoading(true);
+        try {
+          const contract = getLendingPoolContract(provider);
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+          const filterLoanRequested = contract.filters.LoanRequested();
+          const filterLoanProposed = contract.filters.LoanProposed();
+          const filterLoanAccepted = contract.filters.LoanAccepted();
+          const filterLoanRepaid = contract.filters.LoanRepaid();
+          const filterCollateralRefunded =
+            contract.filters.CollateralRefunded();
+          const filterCollateralDefaulted =
+            contract.filters.CollateralDefaulted();
 
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { downloadToExcel } from "@/lib/xlsx";
-import { ModeToggle } from "@/components/themes/toggle";
+          const loanRequestedEvents = await contract.queryFilter(
+            filterLoanRequested
+          );
+          const loanProposedEvents = await contract.queryFilter(
+            filterLoanProposed
+          );
+          const loanAcceptedEvents = await contract.queryFilter(
+            filterLoanAccepted
+          );
+          const loanRepaidEvents = await contract.queryFilter(filterLoanRepaid);
+          const collateralRefundedEvents = await contract.queryFilter(
+            filterCollateralRefunded
+          );
+          const collateralDefaultedEvents = await contract.queryFilter(
+            filterCollateralDefaulted
+          );
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+          const allEvents = [
+            ...loanRequestedEvents,
+            ...loanProposedEvents,
+            ...loanAcceptedEvents,
+            ...loanRepaidEvents,
+            ...collateralRefundedEvents,
+            ...collateralDefaultedEvents,
+          ];
+
+          const txs: Transaction[] = allEvents
+            .map((event) => {
+              if (!event.args) return null;
+
+              switch (event.event) {
+                case "LoanRequested":
+                  return {
+                    id: event.args.loanRequestId.toString(),
+                    amount: event.args.amount.toString(),
+                    type: "LoanRequested",
+                    address: event.args.borrower,
+                    duration: event.args.duration.toString(),
+                    expiringDate: "",
+                    hasExpired: false,
+                    collateral: event.args.deposit.toString(),
+                    interest: "",
+                    status: "Active",
+                  };
+                // Add cases for other events here
+                default:
+                  return null;
+              }
+            })
+            .filter((tx) => tx !== null);
+
+          setTransactions(txs);
+        } catch (error) {
+          console.error("Error fetching transactions:", error);
+        }
+        setLoading(false);
+      }
+    };
+
+    fetchTransactions();
+  }, [provider]);
+
+  return { transactions, loading };
 }
-
-export function ProposalDataTable<TData, TValue>({
-  columns,
-  data,
-}: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
-
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(), // new
-    getSortedRowModel: getSortedRowModel(),
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
-    },
-  });
-
-  return (
-    <div>
-      <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter by amount"
-          value={(table.getColumn("amount")?.getFilterValue() as string) ?? ""}
-          onChange={(event) => {
-            table.getColumn("amount")?.setFilterValue(event.target.value);
-          }}
-          className="max-w-sm"
-        />
-
-        {/*Column visibility dropdown btn*/}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-4">
-              Columns
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                // as long as it's not the actions column, we can toggle visibility
-                if (column.id !== "actions")
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <Button onClick={() => downloadToExcel()} className="ml-4">
-          Export to Excel
-        </Button>
-      </div>
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => {
-              return (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <TableHead key={header.id}>
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                      </TableHead>
-                    );
-                  })}
-                </TableRow>
-              );
-            })}
-          </TableHeader>
-
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows?.map((row) => (
-                <TableRow key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell>No results</TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-      <div>
-        <div>
-          <div className="flex items-center space-x-2 py-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.setPageIndex(0)}
-              disabled={!table.getCanPreviousPage()}
-            >
-              First
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              Next
-            </Button>
-            <div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                disabled={!table.getCanNextPage()}
-              >
-                Last
-              </Button>
-            </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="ml-4">
-                  Show {table.getState().pagination.pageSize}{" "}
-                  <ChevronUp className="ml-2 h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {/* Pagination control goes here */}
-                {[10, 25, 50].map((pageSize) => (
-                  <DropdownMenuCheckboxItem
-                    key={pageSize}
-                    checked={table.getState().pagination.pageSize === pageSize}
-                    onCheckedChange={(value) => {
-                      if (value) {
-                        table.setPageSize(pageSize);
-                      }
-                    }}
-                  >
-                    Show {pageSize}
-                  </DropdownMenuCheckboxItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </div>
-      </div>
-      <div className="text-sm text-muted-foreground">
-        {table.getFilteredSelectedRowModel().rows.length} of{" "}
-        {table.getFilteredRowModel().rows.length} row(s) selected.
-      </div>
-    </div>
-  );
-}
-
-export default ProposalDataTable;

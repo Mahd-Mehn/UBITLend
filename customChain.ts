@@ -2,24 +2,14 @@ import { defineChain } from "viem";
 
 export const ubit = defineChain({
   id: 44433,
-  name: "UBIT SMART CHAIN",
-  nativeCurrency: {
-    decimals: 18,
-    name: "UBIT SMART CHAIN",
-    symbol: "USC",
-  },
+  name: "Ubit Testnet",
+  iconUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/14914.png",
+  iconBackground: "#fff",
+  nativeCurrency: { name: "USC", symbol: "USC", decimals: 18 },
   rpcUrls: {
-    default: {
-      http: ["https://testnet.ubitscan.io/api"],
-      webSocket: undefined,
-    },
+    default: { http: ["https://testnet-rpc.ubitscan.io/"] },
   },
   blockExplorers: {
-    default: { name: "Explorer", url: "https://testnet.ubitscan.io/" },
-  },
-  contracts: {
-    multicall3: {
-      address: "0xDb55d4edC07D86450Cd9BF5052700adb599e810C",
-    },
+    default: { name: "UBITscan", url: "https://ubitscan.io/" },
   },
 });

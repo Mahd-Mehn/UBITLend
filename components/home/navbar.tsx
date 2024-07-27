@@ -44,18 +44,6 @@ export function Navbar() {
           Requests
         </Link>
         <Link
-          href="/proposals"
-          className="text-muted-foreground transition-colors hover:text-foreground"
-        >
-          Proposals
-        </Link>
-        <Link
-          href="/transactions"
-          className="text-muted-foreground transition-colors hover:text-foreground"
-        >
-          Transactions
-        </Link>
-        <Link
           href="/profile"
           className="text-muted-foreground transition-colors hover:text-foreground"
         >

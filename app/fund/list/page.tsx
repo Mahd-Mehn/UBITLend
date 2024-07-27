@@ -1,17 +1,13 @@
 "use client";
-import PeopleDataTable from "./data-table";
 import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import { getLendingPoolContract } from "@/contract";
-import { ColumnDef } from "@tanstack/react-table";
-import { useRouter } from "next/navigation";
+import { getLendingPoolContract } from "@/contract"; // Ensure this path is correct
 
 const LoanRequests = () => {
   const [loanRequests, setLoanRequests] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [provider, setProvider] =
     useState<ethers.providers.Web3Provider | null>(null);
-  const router = useRouter();
 
   useEffect(() => {
     const initializeProvider = async () => {
@@ -47,8 +43,6 @@ const LoanRequests = () => {
             startTime: new Date(
               request.startTime.toNumber() * 1000
             ).toLocaleString(), // Format timestamp
-            status: request.active ? "Active" : "Inactive", // Add status field
-            id: i, // Add id field
           });
         }
 
@@ -64,58 +58,23 @@ const LoanRequests = () => {
     fetchLoanRequests();
   }, [provider]);
 
-  const columns: ColumnDef<any, any>[] = [
-    {
-      header: "Borrower",
-      accessorKey: "borrower",
-    },
-    {
-      header: "Amount (ETH)",
-      accessorKey: "amount",
-    },
-    {
-      header: "Deposit (ETH)",
-      accessorKey: "deposit",
-    },
-    {
-      header: "Duration (days)",
-      accessorKey: "duration",
-    },
-    {
-      header: "Start Time",
-      accessorKey: "startTime",
-    },
-    {
-      header: "Status",
-      accessorKey: "status",
-    },
-    {
-      header: "Actions",
-      accessorKey: "actions",
-      cell: ({ row }) => (
-        <div>
-          <button
-            onClick={() => router.push(`/proposals/${row.original.id}`)}
-            className="mr-2"
-          >
-            View Proposals
-          </button>
-          <button
-            onClick={() => router.push(`/make-proposal/${row.original.id}`)}
-          >
-            Make Proposal
-          </button>
-        </div>
-      ),
-    },
-  ];
-
   return (
-    <div className="container py-10 mx-auto">
+    <div>
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <PeopleDataTable columns={columns} data={loanRequests} />
+        <ul>
+          {loanRequests.map((request, index) => (
+            <li key={index}>
+              <div>Borrower: {request.borrower}</div>
+              <div>Amount: {request.amount} ETH</div>
+              <div>Deposit: {request.deposit} ETH</div>
+              <div>Duration: {request.duration} days</div>
+              <div>Start Time: {request.startTime}</div>
+              <div>Status: {request.active ? "Active" : "Inactive"}</div>
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );
